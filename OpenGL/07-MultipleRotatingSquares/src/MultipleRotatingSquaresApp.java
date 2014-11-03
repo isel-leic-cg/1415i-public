@@ -41,7 +41,7 @@ public class MultipleRotatingSquaresApp implements GLEventListener {
 		shapes.add(new RotatingSquare(  0f, -.5f, .2f, mouthColor,  90));
 		shapes.add(new RotatingSquare(+.3f, -.5f, .2f, mouthColor, -90));
 		
-		FPSAnimator animator = new FPSAnimator(canvas, 120);
+		FPSAnimator animator = new FPSAnimator(canvas, 60);
 		animator.start();
 		
 		JFrame frame = new JFrame("Hello OpenGL");

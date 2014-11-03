@@ -27,7 +27,7 @@ public class RotatingSquareFPSAnimatorApp implements GLEventListener {
 		GLCanvas canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
 		
-		FPSAnimator animator = new FPSAnimator(canvas, 120);
+		FPSAnimator animator = new FPSAnimator(canvas, 60);
 		animator.start();
 		
 		JFrame frame = new JFrame("Hello OpenGL");
