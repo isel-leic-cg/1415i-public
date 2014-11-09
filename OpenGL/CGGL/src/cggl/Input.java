@@ -15,8 +15,16 @@ public class Input implements KeyListener {
 	
 	public boolean isKeyPressed(char key) 
 	{	
+		return isKeyPressed(key, false);
+	}
+
+	public boolean isKeyPressed(char key, boolean releaseKey) 
+	{	
 		if(key < 0 || key >= keysPressed.length) return false;
-		return keysPressed[key];
+
+		boolean pressed = keysPressed[key];
+		if(releaseKey) keysPressed[key] = false;
+		return pressed;
 	}
 	
 	private boolean[] keysPressed = new boolean[256];

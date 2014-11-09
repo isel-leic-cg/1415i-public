@@ -24,7 +24,7 @@ public abstract class World implements GLEventListener {
 	}
 	
 	public Input Input = new Input();
-
+	public TextWriter TextWriter = new TextWriter();
 	
 	// Start
 	public void start(String title) {
