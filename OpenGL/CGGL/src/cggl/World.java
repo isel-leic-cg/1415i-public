@@ -6,6 +6,7 @@ import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
 import com.jogamp.opengl.util.FPSAnimator;
@@ -25,6 +26,7 @@ public abstract class World implements GLEventListener {
 	
 	public Input Input = new Input();
 	public TextWriter TextWriter = new TextWriter();
+	public Camera Camera = new Camera();
 	
 	// Start
 	public void start(String title) {
@@ -48,6 +50,10 @@ public abstract class World implements GLEventListener {
 	
 	// createScene
 	protected abstract void createScene();
+	protected void initScene(GL2 gl) {	}
+	protected void drawScene(GL2 gl) {	}
+	protected void updateScene(long deltaMs, float deltaS) {	}
+
 	
 	private List<SceneObject> sceneObjects = new ArrayList<>(); 
 	public void add(SceneObject obj) 
@@ -58,6 +64,10 @@ public abstract class World implements GLEventListener {
 	// init
 	private void init(GL2 gl) {
 		gl.glClearColor(0, 0, 0, 0);
+		gl.glEnable(GL2.GL_DEPTH_TEST);
+		
+		initScene(gl);
+		
 		for (SceneObject sceneObject : sceneObjects) {
 			sceneObject.initGL(gl);
 		}
@@ -74,6 +84,8 @@ public abstract class World implements GLEventListener {
 		float deltaS = deltaMs / 1000f;
 		lastTimeMs = currTimeMs;
 
+		updateScene(deltaMs, deltaS);
+		
 		for (SceneObject sceneObject : sceneObjects) {
 			sceneObject.update(deltaMs, deltaS);
 		}
@@ -82,10 +94,12 @@ public abstract class World implements GLEventListener {
 	// draw
 	private void draw(GL2 gl) 
 	{
-		gl.glClear(GL_COLOR_BUFFER_BIT);
+		gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		gl.glLoadIdentity();
 		
-		// TODO: camera
+		Camera.setup(gl);
+		
+		drawScene(gl);
 		
 		for (SceneObject sceneObject : sceneObjects) {
 			sceneObject.draw(gl);
@@ -118,7 +132,38 @@ public abstract class World implements GLEventListener {
 	public void dispose(GLAutoDrawable drawable) { }
 
 	@Override
-	public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {}
+	public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) 
+	{
+		GL2 gl = drawable.getGL().getGL2();
+		GLU glu = new GLU();
+		
+		// set viewport according new w and h
+		gl.glViewport(0, 0, w, h);
+		
+		// Update projection values (projector)
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glLoadIdentity();
+		double aspect = w / (double)h;
+		//gl.glOrtho(-aspect, aspect, -1, 1, -1, 1);
+		
+		//gl.glFrustum(-aspect, aspect, -1, 1, -1, 100);
+		
+		glu.gluPerspective(60, aspect, .1, 100);
+
+		// Change back to model-view matrix
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+	}
 
 	
 }
+
+
+
+
+
+
+
+
+
+
+
