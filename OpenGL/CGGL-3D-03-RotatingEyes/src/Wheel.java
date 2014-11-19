@@ -1,6 +1,9 @@
 import static javax.media.opengl.GL2.*;
+import geom.Vector3f;
 
 import javax.media.opengl.GL2;
+
+import com.jogamp.opengl.util.gl2.GLUT;
 
 import cggl.World;
 
@@ -13,25 +16,23 @@ import cggl.World;
  * 
  * P' = T(Cx, Cy) * R(angle) * T(-Cx, -Cy) * P
  */
-public class RotatingSquare extends cggl.SceneObject {
+public class Wheel extends cggl.SceneObject {
 
 	private float angle = 0;
-	private final float cx;
-	private final float cy;
+	public final Vector3f pos;
 	private float rotatingSpeedPerSecond;
 	private final float sz;
 
 	private final float[] color;
 	private char rotatingKeyIncrease, rotatingKeyDecrease;
 
-	public RotatingSquare(float cx, float cy, float sz, 
+	public Wheel(float cx, float cy, float cz, float size, 
 			float[] color,
 			float rotatingSpeedPerSecond,
 			char rotatingKey
 			) {
-		this.cx = cx;
-		this.cy = cy;
-		this.sz = sz;
+		this.pos = new Vector3f(cx, cy, cz);
+		this.sz = size;
 		this.color = color;
 		this.rotatingSpeedPerSecond = rotatingSpeedPerSecond;
 		this.rotatingKeyIncrease = Character.toLowerCase(rotatingKey);
@@ -49,32 +50,29 @@ public class RotatingSquare extends cggl.SceneObject {
 		if(rotatingSpeedPerSecond >  1000) rotatingSpeedPerSecond =  1000;
 		if(rotatingSpeedPerSecond < -1000) rotatingSpeedPerSecond = -1000; 
 		
+		if(World.Instance.Input.isKeyPressed('a')) { this.pos.addScaled(Vector3f.LEFT,  deltaS); }		
+		if(World.Instance.Input.isKeyPressed('s')) { this.pos.addScaled(Vector3f.DOWN,  deltaS); }	
+		if(World.Instance.Input.isKeyPressed('d')) { this.pos.addScaled(Vector3f.RIGHT, deltaS); }	
+		if(World.Instance.Input.isKeyPressed('w')) { this.pos.addScaled(Vector3f.UP,    deltaS); }
+		
 		angle += rotatingSpeedPerSecond * deltaS;
 	}
 
 	@Override
 	protected void drawInternal(GL2 gl) {
+		GLUT glut = new GLUT();
 
-		gl.glTranslatef(cx, cy, 0);
+		
+		gl.glTranslatef(pos.x, pos.y, pos.z);
 		gl.glRotatef(angle, 0, 0, 1);
+		//gl.glRotatef(angle, 0, 1, 0);
+		gl.glScalef(sz, sz, sz);
 
+		gl.glTranslatef(0, 0, -.5f);
 		gl.glColor3fv(color, 0);
-		gl.glBegin(GL_POLYGON);
-		{
-			gl.glVertex3f(-sz / 2, -sz / 2, 0); // Lower Left
-			gl.glVertex3f(+sz / 2, -sz / 2, 0); // Lower Right
-			gl.glVertex3f(+sz / 2, +sz / 2, 0); // Upper Right
-			gl.glVertex3f(-sz / 2, +sz / 2, 0); // Upper left
-		}
-		gl.glEnd();
 
-		gl.glPointSize(6);
-		gl.glColor3f(0, 0, 0);
-		gl.glBegin(GL_POINTS);
-		{
-			gl.glVertex3f(0, 0, 0);
-		}
-		gl.glEnd();
+		glut.glutWireTorus(sz/4, sz, 10, 20);
+
 	}
 
 }

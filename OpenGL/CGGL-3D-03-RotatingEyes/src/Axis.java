@@ -15,6 +15,9 @@ public class Axis extends cggl.SceneObject {
 	@Override
 	protected void drawInternal(GL2 gl) {
 
+		gl.glPushAttrib(GL_LIGHTING_BIT);
+		gl.glDisable(GL_LIGHTING);
+		
 		gl.glLineWidth(1);
 		gl.glBegin(GL_LINES);
 		{
@@ -31,6 +34,8 @@ public class Axis extends cggl.SceneObject {
 			gl.glVertex3f(0, 0, 1);
 		}
 		gl.glEnd();
+		
+		gl.glPopAttrib();
 		
 		
 	}

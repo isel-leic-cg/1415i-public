@@ -38,7 +38,7 @@ public class RotatingSquare extends cggl.SceneObject {
 		this.rotatingKeyDecrease = Character.toUpperCase(rotatingKey);
 	}
 
-	public void update(long deltaMs, float deltaS) 
+	public void update(long currentMs, long deltaMs, float deltaS) 
 	{
 		if(World.Instance.Input.isKeyPressed(rotatingKeyIncrease)) {
 			this.rotatingSpeedPerSecond += 5;

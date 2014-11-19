@@ -10,6 +10,7 @@ import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
 import com.jogamp.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.gl2.GLUT;
 
 import static javax.media.opengl.GL.*;
 
@@ -28,13 +29,16 @@ public abstract class World implements GLEventListener {
 	public TextWriter TextWriter = new TextWriter();
 	public Camera Camera = new Camera();
 	
+	private GLU glu = new GLU();
+	private GLUT glut = new GLUT();
+	
 	// Start
 	public void start(String title) {
 		GLCanvas canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
 
 		JFrame frame = new JFrame(title);
-		frame.setSize(500, 500);
+		frame.setSize(800, 400);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(canvas);
@@ -52,7 +56,8 @@ public abstract class World implements GLEventListener {
 	protected abstract void createScene();
 	protected void initScene(GL2 gl) {	}
 	protected void drawScene(GL2 gl) {	}
-	protected void updateScene(long deltaMs, float deltaS) {	}
+	protected void drawScene(GL2 gl, GLU glu, GLUT glut) {	}
+	protected void updateScene(long currentMs, long deltaMs, float deltaS) {	}
 
 	
 	private List<SceneObject> sceneObjects = new ArrayList<>(); 
@@ -84,10 +89,10 @@ public abstract class World implements GLEventListener {
 		float deltaS = deltaMs / 1000f;
 		lastTimeMs = currTimeMs;
 
-		updateScene(deltaMs, deltaS);
+		updateScene(currTimeMs, deltaMs, deltaS);
 		
 		for (SceneObject sceneObject : sceneObjects) {
-			sceneObject.update(deltaMs, deltaS);
+			sceneObject.update(currTimeMs, deltaMs, deltaS);
 		}
 	}	
 
@@ -99,10 +104,10 @@ public abstract class World implements GLEventListener {
 		
 		Camera.setup(gl);
 		
-		drawScene(gl);
+		drawScene(gl, glu, glut);
 		
 		for (SceneObject sceneObject : sceneObjects) {
-			sceneObject.draw(gl);
+			sceneObject.draw(gl, glu, glut);
 		}
 		gl.glFlush();
 	}

@@ -8,7 +8,7 @@ public class Axis extends cggl.SceneObject {
 	}
 
 	@Override
-	public void update(long deltaMs, float deltaS) 
+	public void update(long currentMs, long deltaMs, float deltaS) 
 	{
 	}
 

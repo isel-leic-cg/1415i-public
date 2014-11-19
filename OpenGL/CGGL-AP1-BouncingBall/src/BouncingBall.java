@@ -29,7 +29,7 @@ public class BouncingBall extends cggl.SceneObject {
 		velocity.add(_direction);
 	}
 
-	public void update(long deltaMs, float deltaS) 
+	public void update(long currentMs, long deltaMs, float deltaS) 
 	{
 		if(World.Instance.Input.isKeyPressed('h', true)) {
 			showHelp = !showHelp;

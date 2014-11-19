@@ -2,6 +2,8 @@ import static javax.media.opengl.GL2.*;
 
 import javax.media.opengl.GL2;
 
+import com.jogamp.opengl.util.gl2.GLUT;
+
 import cggl.World;
 
 /**
@@ -22,6 +24,8 @@ public class RotatingSquare extends cggl.SceneObject {
 	private final float sz;
 
 	private final float[] color;
+	private float[] colorBack = { 0, 1, 1 };
+	private float[] colorSide = { 1, 0, 1 };	
 	private char rotatingKeyIncrease, rotatingKeyDecrease;
 
 	public RotatingSquare(float cx, float cy, float sz, 
@@ -32,7 +36,7 @@ public class RotatingSquare extends cggl.SceneObject {
 		this.cx = cx;
 		this.cy = cy;
 		this.sz = sz;
-		this.color = color;
+		this.color = this.colorBack = this.colorSide = color;
 		this.rotatingSpeedPerSecond = rotatingSpeedPerSecond;
 		this.rotatingKeyIncrease = Character.toLowerCase(rotatingKey);
 		this.rotatingKeyDecrease = Character.toUpperCase(rotatingKey);
@@ -54,27 +58,21 @@ public class RotatingSquare extends cggl.SceneObject {
 
 	@Override
 	protected void drawInternal(GL2 gl) {
+		GLUT glut = new GLUT();
 
+		gl.glEnable(GL_LIGHTING);
+		gl.glEnable(GL_LIGHT0);
+		gl.glEnable(GL_COLOR_MATERIAL);
+		
 		gl.glTranslatef(cx, cy, 0);
 		gl.glRotatef(angle, 0, 0, 1);
+		gl.glScalef(sz, sz, sz/4);
 
+		gl.glTranslatef(0, 0, -.5f);
 		gl.glColor3fv(color, 0);
-		gl.glBegin(GL_POLYGON);
-		{
-			gl.glVertex3f(-sz / 2, -sz / 2, 0); // Lower Left
-			gl.glVertex3f(+sz / 2, -sz / 2, 0); // Lower Right
-			gl.glVertex3f(+sz / 2, +sz / 2, 0); // Upper Right
-			gl.glVertex3f(-sz / 2, +sz / 2, 0); // Upper left
-		}
-		gl.glEnd();
+		//glut.glutSolidCube(1);
+		glut.glutSolidTeapot(1);
 
-		gl.glPointSize(6);
-		gl.glColor3f(0, 0, 0);
-		gl.glBegin(GL_POINTS);
-		{
-			gl.glVertex3f(0, 0, 0);
-		}
-		gl.glEnd();
 	}
 
 }
